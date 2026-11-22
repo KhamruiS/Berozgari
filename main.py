@@ -25,3 +25,16 @@ def add_experience(company_id: int, role: str, year: int, round_type: str, quest
     db.commit()
     db.refresh(e)
     return e
+
+@app.get("/Experiences")
+def list_experiences(company_id: int = None, role: str = None, year: int = None, round_type: str = None, db: Session = Depends(get_db)):
+    q = db.query(Experiences).filter(Experiences.status == "Pending")
+    if company_id:
+        q = q.filter(Experiences.company_id == company_id)
+    if role:
+        q = q.filter(Experiences.role == role)
+    if year:
+        q = q.filter(Experiences.year == year)
+    if round_type:
+        q = q.filter(Experiences.round_type == round_type)
+    return q.all()
